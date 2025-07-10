@@ -1,0 +1,586 @@
+/* Importar fonte Poppins */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
+:root {
+  --primary-color: #4caf50; /* Verde principal para botões e detalhes */
+  --secondary-color: #ffc107; /* Amarelo para destaques (se ainda quiser algum) */
+  --text-color: #333;
+  --background-color: #ffffff; /* Fundo branco para o container */
+  --light-gray-bg: #f9f9f9; /* Um cinza bem claro para elementos sutis */
+  --dark-gray: #555;
+  --border-radius: 8px;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra mais suave */
+  /* Variáveis para a altura do cabeçalho e footer */
+  --header-height: 120px; /* Ajustado para acomodar logo, barra de progresso e padding */
+  --nav-footer-height: 80px; /* Altura aproximada do nav-footer */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: var(--light-gray-bg); /* Fundo da página */
+  color: var(--text-color);
+  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alinha no topo */
+  min-height: 100vh;
+  padding: 20px 0; /* Espaçamento no topo e na base */
+}
+
+.container {
+  background-color: var(
+    --background-color
+  ); /* Fundo branco para o conteúdo principal */
+  max-width: 420px; /* Largura ideal para simular tela de celular */
+  width: 100%;
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+  overflow: hidden; /* Garante que o conteúdo não vaze */
+  position: relative;
+  min-height: 700px; /* Altura mínima para simular um celular */
+  display: flex; /* Adiciona flex para organizar header e pages */
+  flex-direction: column;
+}
+
+/* HEADER FIXO - MAIS CLEAN */
+.main-header {
+  background-color: var(--background-color);
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed; /* Mudei para 'fixed' para garantir que ele flutue acima de tudo */
+  top: 0;
+  z-index: 1000;
+  width: inherit; /* Garante que o header ocupe a largura do container pai */
+  max-width: 420px; /* Limita a largura do header ao do container */
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.logo img {
+  height: 40px; /* Ajuste o tamanho do logo para ficar mais proeminente */
+  margin-right: 0; /* Remove margem se não houver texto ao lado */
+}
+
+/* Removemos .logo-text, .logo-title, .logo-subtitle pois o usuário pediu para tirar "Produtos Virais" */
+.logo-text {
+  display: none;
+}
+
+.progress-bar-container {
+  width: calc(
+    100% - 0px
+  ); /* Ajustado para não ter padding horizontal dentro do container */
+  height: 5px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: var(--primary-color);
+  border-radius: 5px;
+  transition: width 0.3s ease-in-out;
+}
+
+/* PÁGINAS DO FUNIL */
+.funnel-page {
+  /* Padding inferior removido daqui para ser controlado pelo nav-footer ou margem do botão */
+  display: none;
+  flex-grow: 1; /* Permite que as páginas ocupem o espaço restante */
+  flex-direction: column; /* Organiza o conteúdo da página em coluna */
+  justify-content: space-between; /* Espaçamento entre conteúdo e navegação */
+  animation: fadeIn 0.5s ease-out;
+  position: absolute; /* Para sobrepor e permitir transição "lado a lado" */
+  width: 100%;
+  height: 100%; /* Ocupar a altura do container (com header fixo) */
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transform: translateX(100%); /* Começa fora da tela à direita */
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  pointer-events: none; /* Impede cliques em páginas inativas */
+  overflow-y: auto; /* Adiciona scroll se o conteúdo for grande */
+  /* NOVO CÁLCULO PARA O PADDING SUPERIOR */
+  padding: calc(var(--header-height) + 20px) 20px 20px 20px; /* Padding superior dinâmico + padding laterais/inferior */
+}
+
+.funnel-page.active {
+  display: flex; /* Muda para flex para organizar o conteúdo */
+  opacity: 1;
+  transform: translateX(0); /* Entra na tela */
+  pointer-events: all; /* Permite cliques */
+  position: relative; /* Volta para fluxo normal para não "empurrar" */
+}
+
+/* Transição para trás */
+.funnel-page.active.slide-back {
+  animation: slideBackIn 0.5s ease-out forwards;
+  transform: translateX(0);
+}
+
+.funnel-page.slide-out-left {
+  /* Para a página que está saindo para a esquerda (ao voltar) */
+  animation: slideOutLeft 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+.funnel-page.slide-out-right {
+  /* Para a página que está saindo para a direita (ao avançar) */
+  animation: slideOutRight 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes slideInRight {
+  /* Entra pela direita (ao avançar) */
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideBackIn {
+  /* Entra pela esquerda (ao voltar) */
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  /* Sai pela esquerda (ao voltar) */
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutRight {
+  /* Sai pela direita (ao avançar) */
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.page-title {
+  font-size: 1.4em;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 25px;
+  color: var(--primary-color); /* Títulos em verde */
+  line-height: 1.3;
+}
+
+.question-block {
+  text-align: center;
+  margin-bottom: 20px;
+  flex-grow: 1; /* Permite que o bloco de pergunta ocupe espaço */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centraliza verticalmente o conteúdo da pergunta */
+  /* Adicionado padding-bottom para garantir espaço acima do nav-footer */
+  padding-bottom: var(
+    --nav-footer-height
+  ); /* Espaço para o footer nos quizzes */
+}
+
+/* Ajuste específico para o .question-block na page-1, que não tem footer */
+#page-1 .question-block {
+  padding-bottom: 0; /* Remove o padding extra se não tiver footer */
+  margin-bottom: 0; /* Garante que não tenha margem extra no final do bloco */
+}
+
+.question-text {
+  font-size: 1.1em;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.answer-button {
+  display: flex;
+  align-items: center;
+  background-color: var(--background-color); /* Botões de resposta brancos */
+  color: var(--text-color);
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  padding: 15px 20px;
+  margin-bottom: 12px;
+  width: 100%;
+  text-align: left;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra suave para os botões */
+}
+
+.answer-button:hover {
+  background-color: var(--light-gray-bg);
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.answer-button .emoji {
+  font-size: 1.5em;
+  margin-right: 15px;
+  line-height: 1;
+}
+
+/* ESTILO DE CONTEÚDO GENÉRICO */
+.content-block {
+  text-align: center;
+  flex-grow: 1; /* Permite que o bloco de conteúdo ocupe espaço */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centraliza verticalmente o conteúdo */
+  /* Não adicionei padding-bottom aqui, será tratado pelo margin-bottom do botão ou padding da página */
+}
+
+.product-image {
+    max-width: 60%; /* Tamanho reduzido para 80% da largura do contêiner */
+    width: auto; /* Garante que a largura se ajuste automaticamente */
+    display: block; /* Para permitir auto-margins e centralizar */
+    margin: 0 auto 25px auto; /* Centraliza horizontalmente e mantém a margem inferior */
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+.intro-text {
+  font-size: 1em;
+  margin-bottom: 15px;
+  line-height: 1.7;
+  text-align: left;
+}
+.intro-text strong {
+  color: var(--primary-color);
+}
+.intro-text-strong {
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.2em;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+}
+.intro-text-final {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.product-name {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+
+.benefits-list,
+.received-list {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 25px;
+  padding-left: 0;
+}
+
+.benefits-list li,
+.received-list li {
+  background-color: var(--background-color); /* Fundo branco */
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid #eee;
+  font-size: 0.95em;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03); /* Sombra bem leve */
+}
+
+.benefits-list li i,
+.received-list li i {
+  color: var(--primary-color);
+  margin-right: 12px;
+  font-size: 1.2em;
+  margin-top: 2px;
+}
+
+.subtitle-text {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--dark-gray);
+}
+
+/* --- ESTILOS PARA BOTÕES DE NAVEGAÇÃO (AVANÇAR E VOLTAR) --- */
+.nav-footer {
+  position: absolute; /* Posição absoluta para fixar no final da página */
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px 20px; /* Reduzi o padding vertical */
+  display: flex;
+  justify-content: center; /* Centraliza por padrão */
+  background-color: var(--background-color);
+  border-top: 1px solid #eee;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.03);
+  z-index: 999; /* Para ficar acima do conteúdo, mas abaixo do header */
+}
+
+.quiz-nav-footer {
+  /* Para o botão de voltar no quiz */
+  justify-content: flex-start; /* Alinha o botão de voltar à esquerda */
+}
+
+.nav-button {
+  border: none;
+  border-radius: 50px; /* Borda bem arredondada (formato de pílula) */
+  padding: 10px 25px; /* Reduzi ainda mais o padding vertical para deixá-los mais finos */
+  font-size: 1em; /* Levemente menor para acompanhar a nova "finura" */
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease,
+    box-shadow 0.3s ease;
+  max-width: 180px; /* Limite de largura para botões de navegação */
+  display: block; /* Para garantir que o full-width-button funcione */
+}
+
+.next-page-button {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.next-page-button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
+}
+
+.prev-page-button {
+  background-color: #f0f0f0; /* Um cinza claro para o botão de voltar */
+  color: var(--text-color);
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.prev-page-button:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.full-width-button {
+  /* Para os botões "Avançar" nas páginas de conteúdo */
+  width: 100%;
+  max-width: 300px; /* Mantém um max-width para não esticar demais em telas maiores */
+  margin: 30px auto 30px auto; /* Centraliza e adiciona margem superior E INFERIOR */
+}
+
+/* Estilo para o input de nome */
+.input-group {
+  margin-bottom: 20px;
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.input-group input {
+  width: 80%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  font-size: 1em;
+  text-align: center;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* DEPOIMENTOS */
+.testimonial-card {
+  background-color: var(--background-color);
+  border: 1px solid #eee;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.testimonial-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid var(--primary-color);
+}
+
+.testimonial-text {
+  font-style: italic;
+  margin-bottom: 10px;
+  color: var(--dark-gray);
+  font-size: 0.95em;
+}
+
+.testimonial-author {
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9em;
+}
+
+/* VÍDEO */
+.video-title {
+  color: var(--primary-color); /* Título do vídeo em verde */
+  font-size: 1.6em;
+}
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* Proporção 16:9 */
+  height: 0;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* CTA FINAL */
+.final-cta-title {
+  color: var(--primary-color);
+  font-size: 1.8em;
+  margin-bottom: 30px;
+}
+
+.main-cta-button {
+  background-image: linear-gradient(
+    to right,
+    #66bb6a,
+    #4caf50
+  ); /* Gradiente de verde para o botão principal */
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 20px 40px;
+  font-size: 1.4em;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  width: 90%;
+  max-width: 350px;
+  margin: 30px auto;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.main-cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.disclaimer {
+  font-size: 0.85em;
+  color: var(--dark-gray);
+  text-align: center;
+  margin-top: 15px;
+  font-style: italic;
+}
+
+/* Responsividade básica para telas menores */
+@media (max-width: 480px) {
+  body {
+    padding: 0;
+    align-items: stretch;
+    min-height: 100vh;
+  }
+  .container {
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 100vh;
+    height: 100vh; /* Para garantir que o container ocupe a tela toda */
+  }
+  .main-header {
+    position: fixed; /* Mantém fixo */
+    width: 100%; /* Ocupa a largura total da tela em mobile */
+    max-width: none; /* Remove limite para mobile */
+  }
+  .funnel-page {
+    padding: 15px;
+    /* Reajuste do padding-top para mobile */
+    padding-top: calc(
+      var(--header-height) + 15px
+    ); /* Ajusta padding para o header fixo */
+    padding-bottom: 15px; /* Espaço para o nav-footer ou fim da página */
+  }
+  .page-title {
+    font-size: 1.3em;
+  }
+  .product-name {
+    font-size: 1.3em;
+  }
+  .main-cta-button {
+    font-size: 1.2em;
+    padding: 18px 30px;
+  }
+  .nav-footer {
+    padding: 10px 15px; /* Ajusta padding do footer de navegação */
+  }
+  .nav-button {
+    padding: 10px 20px; /* Ajusta padding do botão de navegação para telas menores */
+    font-size: 0.9em;
+  }
+  .full-width-button {
+    margin: 20px auto 20px auto; /* Ajusta margem para telas menores */
+  }
+}
